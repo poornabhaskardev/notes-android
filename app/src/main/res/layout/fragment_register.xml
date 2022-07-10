@@ -121,7 +121,7 @@
             android:layout_marginTop="20dp"
             android:fontFamily="@font/sf_pro_display_regular"
             android:text=""
-            android:textColor="@color/highlight_text_color"
+            android:textColor="@color/error_color"
             android:textSize="12sp" />
 
         <Button
