@@ -13,7 +13,7 @@ public class UserValidation @Inject constructor() {
         }else if(!Patterns.EMAIL_ADDRESS.matcher(userRequest.email).matches()){
             result = Pair(false, "Please enter valid email")
         }else if(userRequest.password.length<=6){
-            result = Pair(false, "Password length must be greater than 5")
+            result = Pair(false, "Password length must be greater than 6")
         }
         return result
     }
