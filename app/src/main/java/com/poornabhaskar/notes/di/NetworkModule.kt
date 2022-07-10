@@ -21,7 +21,6 @@ class NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(BASE_URL)
             .build()
-
     }
 
     @Singleton

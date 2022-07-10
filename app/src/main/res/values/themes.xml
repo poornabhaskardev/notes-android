@@ -17,7 +17,9 @@
     <style name="NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:windowFullscreen">true</item>
+<!--        <item name="android:windowFullscreen">true</item>-->
+<!--        To hide status bar-->
         <item name="android:windowContentOverlay">@null</item>
+        <item name="android:statusBarColor" >@color/black</item>
     </style>
 </resources>

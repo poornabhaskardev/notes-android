@@ -13,8 +13,10 @@ import com.poornabhaskar.notes.R
 import com.poornabhaskar.notes.databinding.FragmentRegisterBinding
 import com.poornabhaskar.notes.model.UserRequest
 import com.poornabhaskar.notes.util.NetworkResult
+import com.poornabhaskar.notes.validation.UserValidation
 import com.poornabhaskar.notes.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
@@ -22,12 +24,12 @@ class RegisterFragment : Fragment() {
     private var _binding:FragmentRegisterBinding?=null
     private val binding get() =_binding!!
     private val userViewModel by viewModels<UserViewModel>()
+    @Inject lateinit var userValidation:UserValidation
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         _binding = FragmentRegisterBinding.inflate(inflater, container , false)
         return binding.root
     }
@@ -35,23 +37,18 @@ class RegisterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnSignUp.setOnClickListener {
-            val validationResult = validateUserInput()
+            val userRequest:UserRequest=getUserRequest()
+            val validationResult = userValidation.validateOnRegisterUser(userRequest)
             if (validationResult.first){
-                userViewModel.registerUser(getUserRequest())
+                userViewModel.registerUser(userRequest)
             }else{
                 binding.txtError.text=validationResult.second
             }
         }
         binding.btnLogin.setOnClickListener {
-            userViewModel.registerUser(UserRequest("test98765498765@gmail.com","111111","Test985367536745"))
-            //findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
         }
-        bindObservers()
-    }
-
-    private fun validateUserInput(): Pair<Boolean, String> {
-        val userRequest = getUserRequest()
-        return userViewModel.validateCredentials(userRequest.username,userRequest.email, userRequest.password)
+        bindUserResponseLiveDataObservers()
     }
 
     private fun getUserRequest(): UserRequest {
@@ -61,7 +58,7 @@ class RegisterFragment : Fragment() {
         return UserRequest( email, password, username)
     }
 
-    private fun bindObservers() {
+    private fun bindUserResponseLiveDataObservers() {
         userViewModel.userResponseLiveData.observe(viewLifecycleOwner, Observer {
             binding.progressBar.isVisible = false
             when (it) {
