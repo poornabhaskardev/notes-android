@@ -2,7 +2,9 @@ package com.poornabhaskar.notes.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
 import com.poornabhaskar.notes.api.UserApi
+import com.poornabhaskar.notes.model.ApiError
 import com.poornabhaskar.notes.model.UserRequest
 import com.poornabhaskar.notes.model.UserResponse
 import com.poornabhaskar.notes.util.NetworkResult
@@ -23,6 +25,7 @@ class UserRepository @Inject constructor (private val userApi: UserApi) {
     }
 
     suspend fun loginUser(userRequest: UserRequest){
+        _userResponseLiveData.postValue(NetworkResult.Loading())
         val response = userApi.signin(userRequest)
         handleResponse(response)
     }
@@ -31,8 +34,8 @@ class UserRepository @Inject constructor (private val userApi: UserApi) {
         if (response.isSuccessful && response.body() != null) {
             _userResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
         } else if (response.errorBody() != null) {
-            var error = JSONObject(response.errorBody()!!.charStream().readText())
-            _userResponseLiveData.postValue(NetworkResult.Error(error.getString("message")))
+            val apiError:ApiError = Gson().fromJson(response.errorBody()!!.charStream().readText(), ApiError::class.java)
+            _userResponseLiveData.postValue(NetworkResult.Error(apiError.message))
         } else {
             _userResponseLiveData.postValue(NetworkResult.Error("Something went wrong"))
         }

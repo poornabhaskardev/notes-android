@@ -17,4 +17,16 @@ public class UserValidation @Inject constructor() {
         }
         return result
     }
+
+    fun validateOnLoginUser(userRequest: UserRequest): Pair<Boolean,String>{
+        var result = Pair(true, "")
+        if(TextUtils.isEmpty(userRequest.email) || TextUtils.isEmpty(userRequest.password) ){
+            result = Pair(false, "Please enter credentials")
+        }else if(!Patterns.EMAIL_ADDRESS.matcher(userRequest.email).matches()){
+            result = Pair(false, "Please enter valid email")
+        }else if(userRequest.password.length<=6){
+            result = Pair(false, "Password length must be greater than 6")
+        }
+        return result
+    }
 }
